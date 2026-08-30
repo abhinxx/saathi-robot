@@ -1,0 +1,6 @@
+# The hold logic and voice loop need nothing outside the standard library.
+# Everything below is only for running against real hardware.
+
+# LeRobot, for the SO-101 follower arm and its Feetech serial bus.
+# Requires Python 3.10 or newer.
+lerobot>=0.6.0
