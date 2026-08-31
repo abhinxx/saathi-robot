@@ -182,7 +182,39 @@ Short lines, because someone under rubble is in pain and frightened and cannot f
 
 ## 🎬 Demo
 
-> *Demo link to be added.*
+<div align="center">
+
+**Teleoperated handshake — leader arm drives, follower mirrors, recorded at 30 Hz.**
+
+[**▶ media/teleop_handshake.mp4**](media/teleop_handshake.mp4) · 79 s · 2,358 frames
+
+</div>
+
+> Recorded live on an SO-101 pair at the Himalaya Robotics Hack, 30 Aug 2026.
+> A human drives the leader; the follower mirrors it. This is teleoperation,
+> not autonomy — see [honest scope](#-honest-scope).
+
+---
+
+## 🦾 Running on hardware
+
+The rig this was built on, and what it took to get there:
+
+| | |
+|---|---|
+| Stack | [`makermodslab`](https://github.com/makermods-robotics/makermodslab) — LeRobot in a browser tab |
+| Arms | SO-101 leader/follower, Feetech STS3215 |
+| Camera | `front`, 640×480 @ 30 |
+| Compute | `mps` on an M4 Pro |
+| Dataset | 5 episodes · 2,358 frames — [`dataset/`](dataset) |
+| Calibration | [`calibration/`](calibration) — both arms |
+
+**[→ docs/HARDWARE.md](docs/HARDWARE.md)** — bring-up notes: identifying arms by
+supply voltage, the auto-calibration USB wedge that survives `SIGKILL`, the
+recording timeout that silently discards episodes, and why camera viewpoint
+decides whether a policy works at all.
+
+**[→ docs/DATASET.md](docs/DATASET.md)** — schema, features, how it was recorded.
 
 ---
 
@@ -266,6 +298,10 @@ saathi-robot/
 │   ├── hold.py            force-limited hold loop + simulated gripper + self-check
 │   └── voice.py           threaded Nepali reassurance loop
 ├── phrases/               pre-recorded Nepali audio (.wav, named after romanised line)
+├── dataset/               5 recorded teleop episodes (LeRobot format, meta + parquet)
+├── calibration/           saathi_leader.json, saathi_follower.json
+├── media/
+│   └── teleop_handshake.mp4   the demo, 79 s
 ├── deck/
 │   ├── Saathi.pdf         the pitch deck
 │   ├── Saathi.pptx        editable source
@@ -273,7 +309,9 @@ saathi-robot/
 │   └── slides/            s01–s15 rendered PNGs
 ├── docs/
 │   ├── PITCH.md           pitch script, submission text, Q&A prep
-│   └── VIDEO.md           2-minute demo shot list
+│   ├── VIDEO.md           2-minute demo shot list
+│   ├── HARDWARE.md        SO-101 bring-up: the traps and the fixes
+│   └── DATASET.md         recorded dataset schema and provenance
 └── requirements.txt
 ```
 
@@ -287,9 +325,12 @@ saathi-robot/
 
 | | Component |
 |:---:|:---|
-| ✅ **REAL** | 6-DOF RobStride arm live on LeRobot, MIT protocol over CAN |
-| ✅ **REAL** | A force-limited close, replayed on a live human hand, Nepali speech on contact |
-| ✅ **REAL** | Per-joint torque pulled out of a driver that was discarding it |
+| ✅ **REAL** | SO-101 leader/follower live on LeRobot, both arms calibrated |
+| ✅ **REAL** | Teleoperation — leader drives, follower mirrors. [Video](media/teleop_handshake.mp4) |
+| ✅ **REAL** | 5 episodes recorded to a LeRobot dataset, 2,358 frames at 30 Hz |
+| ✅ **REAL** | Force-limited hold loop, self-checked ([`saathi/hold.py`](saathi/hold.py)) |
+| ✅ **REAL** | On-device Nepali reassurance loop ([`saathi/voice.py`](saathi/voice.py)) |
+| ⚠️ **PARTIAL** | Pretrained handshake policy runs on the arm, but its training used an arm-mounted camera we couldn't reproduce — see [HARDWARE.md](docs/HARDWARE.md#camera-viewpoint-decides-whether-a-policy-works) |
 | ⬜ **RENDER** | The tracked chassis |
 
 </div>
